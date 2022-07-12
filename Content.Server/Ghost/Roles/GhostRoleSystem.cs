@@ -4,7 +4,6 @@ using Content.Server.Ghost.Components;
 using Content.Server.Ghost.Roles.Components;
 using Content.Server.Ghost.Roles.UI;
 using Content.Server.Mind.Components;
-using Content.Server.MobState.States;
 using Content.Server.Players;
 using Content.Shared.Administration;
 using Content.Shared.Database;
@@ -27,7 +26,7 @@ namespace Content.Server.Ghost.Roles
     {
         [Dependency] private readonly EuiManager _euiManager = default!;
         [Dependency] private readonly IPlayerManager _playerManager = default!;
-        [Dependency] private readonly AdminLogSystem _adminLogSystem = default!;
+        [Dependency] private readonly IAdminLogManager _adminLogger = default!;
         [Dependency] private readonly FollowerSystem _followerSystem = default!;
 
         private uint _nextRoleIdentifier;
@@ -57,14 +56,14 @@ namespace Content.Server.Ghost.Roles
         {
             switch (args.CurrentMobState)
             {
-                case NormalMobState:
+                case DamageState.Alive:
                 {
                     if (!component.Taken)
                         RegisterGhostRole(component);
                     break;
                 }
-                case CriticalMobState:
-                case DeadMobState:
+                case DamageState.Critical:
+                case DamageState.Dead:
                     UnregisterGhostRole(component);
                     break;
             }
@@ -182,7 +181,7 @@ namespace Content.Server.Ghost.Roles
             if (!role.Take(player)) return;
 
             if (player.AttachedEntity != null)
-                _adminLogSystem.Add(LogType.GhostRoleTaken, LogImpact.Low, $"{player:player} took the {role.RoleName:roleName} ghost role {ToPrettyString(player.AttachedEntity.Value):entity}");
+                _adminLogger.Add(LogType.GhostRoleTaken, LogImpact.Low, $"{player:player} took the {role.RoleName:roleName} ghost role {ToPrettyString(player.AttachedEntity.Value):entity}");
 
             CloseEui(player);
         }

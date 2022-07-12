@@ -15,6 +15,7 @@
             Poison: 3
       - !type:PopupMessage
         type: Local
+        visualType: MediumCaution
         messages: [ "generic-reagent-effect-burning-insides" ]
         probability: 0.33
 
@@ -36,7 +37,7 @@
   physicalDesc: reagent-physical-desc-shiny
   color: "#77b58e"
   boilingPoint: 290.0 # Glycerin
-  meltingPoint: 18.2 
+  meltingPoint: 18.2
   tileReactions:
     - !type:SpillTileReaction
       paralyzeTime: 3
